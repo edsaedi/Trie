@@ -61,45 +61,84 @@ namespace Trie
                     tempTrieNode.IsWord = true;
                 }
             }
-            //Make sure to do isword
         }
 
         public bool Contains(string word)
         {
-            var children = root.Children;
-            for (int i = 0; i < word.Length; i++)
+            var temp = SearchNode(word);
+            if (temp != null && temp.IsWord)
             {
-                var letter = word[i];
-                TrieNode tempTrieNode;
-                if (children.ContainsKey(letter))
-                {
-                    tempTrieNode = children[letter];
-                }
-                else
-                {
-                    return false;
-                }
-                if (i == word.Length - 1 && tempTrieNode.IsWord)
-                {
-                    return true;
-                }
+                return true;
             }
             return false;
         }
 
         private TrieNode SearchNode(string word)
         {
+            var children = root.Children;
+            for (int i = 0; i < word.Length; i++)
+            {
+                TrieNode tempTrieNode;
+                var letter = word[i];
+                if (children.ContainsKey(letter))
+                {
+                    tempTrieNode = children[letter];
+                }
+                else
+                {
+                    return null;
+                }
+                children = tempTrieNode.Children;
+                if (i == word.Length - 1)
+                {
+                    return tempTrieNode;
+                }
+            }
             return null;
         }
 
         public List<string> GetAllMatchingPrefix(string prefix)
         {
-            return null;
+            List<string> list = new List<string>();
+
+            var temp = SearchNode(prefix);
+
+
+            Words(temp, list, prefix);
+
+
+            return list;
+        }
+
+        private void Words(TrieNode node, List<string> list, string prefix)
+        {
+            if (node == null)
+            {
+                return;
+            }
+
+            foreach ((char letter, TrieNode trieNode) in node.Children)
+            {
+                Words(trieNode, list, prefix + trieNode.Letter);
+            }
+
+            if (node.IsWord)
+            {
+                list.Add(prefix);
+            }
         }
 
         public bool Remove(string prefix)
         {
-            return false;
+            var temp = SearchNode(prefix);
+            if (temp == null)
+            {
+                return false;
+            }
+
+            temp.IsWord = false;
+
+            return true;
         }
     }
 }
