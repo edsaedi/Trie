@@ -97,19 +97,6 @@ namespace Trie
             return null;
         }
 
-        public List<string> GetAllMatchingPrefix(string prefix)
-        {
-            List<string> list = new List<string>();
-
-            var temp = SearchNode(prefix);
-
-
-            Words(temp, list, prefix);
-
-
-            return list;
-        }
-
         private void Words(TrieNode node, List<string> list, string prefix)
         {
             if (node == null)
@@ -127,6 +114,56 @@ namespace Trie
                 list.Add(prefix);
             }
         }
+
+        public List<string> GetAllMatchingPrefix(string prefix)
+        {
+            List<string> list = new List<string>();
+
+            var temp = SearchNode(prefix);
+
+            Words(temp, list, prefix);
+
+            return list;
+        }
+
+        public List<string> GetAllMatchingPrefixesStack(string prefix)
+        {
+            string initialPrefix = prefix;
+            List<string> list = new List<string>();
+
+            Stack<TrieNode> stack = new Stack<TrieNode>();
+
+            var node = SearchNode(prefix);
+            stack.Push(node);
+
+            while (stack.Count > 0)
+            {
+                foreach ((char letter, TrieNode TrieNode) in node.Children)
+                {
+                    stack.Push(TrieNode);
+                }
+
+                node = stack.Pop();
+                prefix += node.Letter;
+                if (node.IsWord)
+                {
+                    list.Add(prefix);
+                    prefix = initialPrefix;
+                    if (node.Children.Count > 0)
+                    {
+                        prefix += node.Letter;
+                    }
+
+                }
+                if (node.Children.Count == 0)
+                {
+                    prefix = initialPrefix;
+                }
+            }
+
+            return list;
+        }
+
 
         public bool Remove(string prefix)
         {

@@ -28,6 +28,13 @@ namespace Trie
                 Console.WriteLine(word);
             }
 
+            Console.WriteLine();
+
+            foreach (var word in trie.GetAllMatchingPrefixesStack("h"))
+            {
+                Console.WriteLine(word);
+            }
+
 
             //Console.WriteLine(trie.Contains("hell"));
             //Console.WriteLine(trie.Contains("has"));
