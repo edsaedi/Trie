@@ -131,33 +131,29 @@ namespace Trie
             string initialPrefix = prefix;
             List<string> list = new List<string>();
 
-            Stack<TrieNode> stack = new Stack<TrieNode>();
+            Stack<Tuple<TrieNode, string>> stack = new Stack<Tuple<TrieNode, string>>();
 
             var node = SearchNode(prefix);
-            stack.Push(node);
+            Tuple<TrieNode, string> varTuple = new Tuple<TrieNode, string>(node, initialPrefix);
+            stack.Push(varTuple);
 
             while (stack.Count > 0)
             {
                 foreach ((char letter, TrieNode TrieNode) in node.Children)
                 {
-                    stack.Push(TrieNode);
+                    varTuple = new Tuple<TrieNode, string>(TrieNode, (initialPrefix + letter));
+                    stack.Push(varTuple);
                 }
 
-                node = stack.Pop();
-                prefix += node.Letter;
+                var tuple = stack.Pop();
+                node = tuple.Item1;
+                var pre = tuple.Item2;
+                initialPrefix = pre;
+
+
                 if (node.IsWord)
                 {
-                    list.Add(prefix);
-                    prefix = initialPrefix;
-                    if (node.Children.Count > 0)
-                    {
-                        prefix += node.Letter;
-                    }
-
-                }
-                if (node.Children.Count == 0)
-                {
-                    prefix = initialPrefix;
+                    list.Add(tuple.Item2);
                 }
             }
 
